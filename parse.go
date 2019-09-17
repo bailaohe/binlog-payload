@@ -74,8 +74,13 @@ func ParsePayload(e *canal.RowsEvent) *DBSyncPayload {
 				}
 			}
 
+			preUpdate := make(map[string]interface{})
+			for _, c := range columnChanged {
+				preUpdate[c] = beforeUpdate[c]
+			}
+
 			rowChanges = append(rowChanges, &RowChange{
-				PreUpdate: beforeUpdate,
+				PreUpdate: preUpdate,
 				Snapshot: afterUpdate,
 			})
 		}
@@ -85,8 +90,9 @@ func ParsePayload(e *canal.RowsEvent) *DBSyncPayload {
 		EventType: strings.ToUpper(e.Action),
 		Db: e.Table.Schema,
 		Table: e.Table.Name,
-		PKColumn: e.Table.GetPKColumn(0).Name,
-		Columns: *parseColumns(&e.Table.Columns),
+		//TODO temporally remove scheme information from payload
+		//PKColumn: e.Table.GetPKColumn(0).Name,
+		//Columns: *parseColumns(&e.Table.Columns),
 		Rows: rowChanges,
 		ColumnsChanged: columnChanged,
 	}
