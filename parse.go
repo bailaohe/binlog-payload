@@ -89,6 +89,7 @@ func ParsePayload(e *canal.RowsEvent) *DBSyncPayload {
 		PKColumn: e.Table.GetPKColumn(0).Name,
 		Columns: *parseColumns(&e.Table.Columns),
 		Rows: rowChanges,
+		ColumnsChanged: columnChanged,
 	}
 	return payload
 }
