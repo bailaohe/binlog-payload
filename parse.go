@@ -36,6 +36,7 @@ func parseColumns(columns *[]schema.TableColumn) *map[string]schema.TableColumn 
 }
 
 func ParsePayload(e *canal.RowsEvent) *DBSyncPayload {
+	var columnChanged []string
 	rowChanges := []*RowChange{}
 	if e.Action == canal.InsertAction {
 		for _, row := range e.Rows {
@@ -52,8 +53,6 @@ func ParsePayload(e *canal.RowsEvent) *DBSyncPayload {
 			})
 		}
 	} else if e.Action == canal.UpdateAction {
-		var columnChanged []string
-
 		for i := 0; i < len(e.Rows); i+=2 {
 			pre := e.Rows[i]
 			post := e.Rows[i+1]
