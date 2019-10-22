@@ -19,7 +19,11 @@ func parseRowMap(columns *[]schema.TableColumn, row []interface{}) *map[string]i
 	}
 
 	for colId := 0; colId < nCol; colId++ {
-		rowMap[(*columns)[colId].Name] = row[colId]
+		if (*columns)[colId].RawType == "json" || (*columns)[colId].RawType == "text" {
+			rowMap[(*columns)[colId].Name] = string(row[colId].([]uint8))
+		} else {
+			rowMap[(*columns)[colId].Name] = row[colId]
+		}
 	}
 	return &rowMap
 }
